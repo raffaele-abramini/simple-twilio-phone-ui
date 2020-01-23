@@ -1,5 +1,5 @@
 import React from "react";
 import ReactDom from "react-dom";
-import { PhoneForm } from "./components/PhoneForm";
+import { Main } from "./components/Main";
 
-ReactDom.render(<PhoneForm />, document.getElementById("app"));
+ReactDom.render(<Main />, document.getElementById("app"));
