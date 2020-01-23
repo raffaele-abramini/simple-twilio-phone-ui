@@ -38,6 +38,8 @@ export const setup = async () => {
   });
 
   device.on("incoming", function(connection) {
+    console.warn("setting `Connection` variable");
+    window.connection = connection;
     console.log("incoming", connection);
     Emitter.emit(events.incoming, { connection });
   });

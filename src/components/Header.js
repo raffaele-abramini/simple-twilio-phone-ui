@@ -11,10 +11,7 @@ export const Header = () => {
   }, []);
   return (
     <div>
-      <p>
-        Hey! You are logged with a client named <strong>{identity}</strong>.
-      </p>
-      <p>To interact, please call {fromPhoneNumber}</p>
+      <p>Hello! To interact, please call {fromPhoneNumber}</p>
     </div>
   );
 };

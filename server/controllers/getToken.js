@@ -1,10 +1,9 @@
-const ClientCapability = require('twilio').jwt.ClientCapability;
+const ClientCapability = require("twilio").jwt.ClientCapability;
 const secret = require("../../secret.json");
-
+const globals = require("../globals");
 
 module.exports = (req, res) => {
-
-  const identity = "cane";
+  const { identity } = globals;
   // put your Twilio API credentials here
   const accountSid = secret.accountSid;
   const authToken = secret.authToken;
@@ -18,15 +17,17 @@ module.exports = (req, res) => {
   });
 
   capability.addScope(new ClientCapability.IncomingClientScope(identity));
-  capability.addScope(new ClientCapability.OutgoingClientScope({
-    applicationSid: appSid,
-    clientName: identity,
-  }));
+  capability.addScope(
+    new ClientCapability.OutgoingClientScope({
+      applicationSid: appSid,
+      clientName: identity
+    })
+  );
 
   // Include identity and token in a JSON response
-  res.set('Content-Type', 'application/json');
+  res.set("Content-Type", "application/json");
   res.send({
     identity: identity,
-    token: capability.toJwt(),
+    token: capability.toJwt()
   });
 };

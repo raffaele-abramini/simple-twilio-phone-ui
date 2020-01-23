@@ -1,6 +1,8 @@
 import React, { useReducer, useEffect } from "react";
 import EventEmitter, { events } from "../events";
 import { setup } from "../twilioClient";
+import { api } from "../api";
+import { Button, Input, Status } from "./styles";
 
 const reducer = (state = {}, action) => {
   switch (action.type) {
@@ -40,6 +42,7 @@ export const CallControls = () => {
     EventEmitter.on(events.connect, () => dispatch({ type: events.connect }));
     EventEmitter.on(events.cancel, () => dispatch({ type: events.ready }));
     EventEmitter.on(events.disconnect, () => dispatch({ type: events.ready }));
+
     setup();
 
     return EventEmitter.removeAllListeners;
@@ -47,30 +50,51 @@ export const CallControls = () => {
 
   return (
     <div>
-      Call status: {status}
+      <p>
+        Call status: <Status status={status}>{status}</Status>
+      </p>
+      {status === events.ready && (
+        <p style={{ color: "#888", fontStyle: "italic" }}>Waiting for a call</p>
+      )}
       {status === events.incoming && (
         <>
-          <button type="button" onClick={() => connection.accept()}>
+          <Button id="accept" type="button" onClick={() => connection.accept()}>
             Accept
-          </button>
-          <button type="button" onClick={() => connection.reject()}>
+          </Button>
+          <Button
+            id="decline"
+            type="button"
+            onClick={() => connection.reject()}
+          >
             Decline
-          </button>
+          </Button>
         </>
       )}
       {status === events.connect && (
         <>
-          <input type="number" onKeyPress={e => connection.sendDigits(e.key)} />
+          <div>
+            <Input
+              type="number"
+              style={{ width: 300 }}
+              placeholder="Send digits by typing here"
+              onKeyPress={e => connection.sendDigits(e.key)}
+            />
+          </div>
 
-          <button type="button" onClick={() => connection.disconnect()}>
-            Drop
-          </button>
-          <button
+          <Button
+            id="hangup"
+            type="button"
+            onClick={() => connection.disconnect()}
+          >
+            Hangup
+          </Button>
+          <Button
+            id="mute"
             type="button"
             onClick={() => connection.mute(!connection.isMuted())}
           >
             Mute
-          </button>
+          </Button>
         </>
       )}
     </div>
