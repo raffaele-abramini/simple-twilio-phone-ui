@@ -6,6 +6,9 @@ const log = console.log;
 export const setup = async () => {
   const response = await api.get("/token");
   const data = response.data;
+
+  Emitter.emit(events._receivedIdentity, { identity: data.identity });
+
   log("Got a token.", data.identity);
 
   // Setup Twilio.Device

@@ -1,6 +1,6 @@
 import React, { useReducer, useEffect } from "react";
 import EventEmitter, { events } from "../events";
-import { setup } from "../setup";
+import { setup } from "../twilioClient";
 
 const reducer = (state = {}, action) => {
   switch (action.type) {
@@ -41,6 +41,7 @@ export const CallControls = () => {
     EventEmitter.on(events.cancel, () => dispatch({ type: events.ready }));
     EventEmitter.on(events.disconnect, () => dispatch({ type: events.ready }));
     setup();
+
     return EventEmitter.removeAllListeners;
   }, []);
 
@@ -59,6 +60,8 @@ export const CallControls = () => {
       )}
       {status === events.connect && (
         <>
+          <input type="number" onKeyPress={e => connection.sendDigits(e.key)} />
+
           <button type="button" onClick={() => connection.disconnect()}>
             Drop
           </button>

@@ -1,12 +1,12 @@
 import React from "react";
 import { CallControls } from "./CallControls";
-import { PhoneForm } from "./PhoneForm";
+import { Header } from "./Header";
 
 export const Main = () => {
   return (
     <div>
+      <Header />
       <CallControls />
-      <PhoneForm />
     </div>
   );
 };
