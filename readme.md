@@ -43,3 +43,8 @@ In the repository, clone `secret.dummy.json` as a `secret.json` file and fill it
 ###6.
 
 Finally, just run `npm start`. You can navigate to http://localhost:1234/ to see your UI.
+
+
+## Limitations and troubleshooting
+
+If you don't have a premium account of ngrok, you'll have to update your TWML app endpoint every time you run `npm run tunnel`.
