@@ -4,7 +4,8 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "start": "npx nodemon ./server/server.js & parcel ./src/index.html"
+    "start": "npx nodemon ./server/server.js & parcel ./src/index.html",
+    "tunnel": "npx ngrok http 127.0.0.1:1337"
   },
   "author": "",
   "license": "ISC",
