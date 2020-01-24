@@ -1,5 +1,4 @@
 const express = require("express");
-const twilio = require("./api/twilio");
 const getToken = require("./controllers/getToken");
 const redirectToClient = require("./controllers/redirectToClient");
 const globals = require("./globals");
@@ -26,20 +25,11 @@ app.use((req, res, next) => {
 
 app.get("/token", getToken);
 
-app.get("/call", (req, res) => {
-  twilio.makeCall();
-  res.send("calling");
-});
-
-app.get("/drop", (req, res) => {
-  twilio.dropCall();
-  res.send("dropping");
-});
-
 app.post("/redirectToClient", (req, res) => {
   res.set("Content-Type", "text/xml");
   res.send(redirectToClient(req.body.To, req.body.CallSid));
 });
 
 http.listen(1337, "127.0.0.1");
+
 console.log("Twilio Client app server running at http://127.0.0.1:1337/");

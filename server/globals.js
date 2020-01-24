@@ -9,6 +9,6 @@ module.exports = {
     default: "default",
     fakeAnswer: "fakeAnswer",
     busy: "busy",
-    enqueue: "enqueue"
+    hold: "hold"
   }
 };

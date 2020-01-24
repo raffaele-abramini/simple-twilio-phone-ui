@@ -4,12 +4,7 @@ const globals = require("../globals");
 
 module.exports = (req, res) => {
   const { identity } = globals;
-  // put your Twilio API credentials here
-  const accountSid = secret.accountSid;
-  const authToken = secret.authToken;
-
-  // put your Twilio Application Sid here
-  const appSid = secret.appSid;
+  const { accountSid, authToken, appSid } = secret;
 
   const capability = new ClientCapability({
     accountSid,

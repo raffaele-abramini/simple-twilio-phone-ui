@@ -14,19 +14,24 @@ const setServerCallOption = value => {
 };
 
 const setCallOption = ({ value }) => {
+  console.log(`Change request for handleCall: "${value}"`);
   setServerCallOption(value);
 
   let twiml;
 
   if (value === globals.handleCallOptions.default) {
+    // Go back to client
     twiml = `<Response><Dial><Client>${globals.identity}</Client></Dial></Response>`;
   } else if (value === globals.handleCallOptions.busy) {
+    // Send busy signal
     twiml = `<Response><Reject reason="busy"></Reject></Response>`;
     setServerCallOption(globals.handleCallOptions.default);
   } else if (globals.handleCall === globals.handleCallOptions.fakeAnswer) {
+    // Send an automated response
     twiml = `<Response><Say>This is an automated response. And on this bombshell, goodnight!</Say></Response>`;
     setServerCallOption(globals.handleCallOptions.default);
-  } else if (globals.handleCall === globals.handleCallOptions.enqueue) {
+  } else if (globals.handleCall === globals.handleCallOptions.hold) {
+    // Play the hold music
     twiml = `<Response><Play>http://com.twilio.sounds.music.s3.amazonaws.com/MARKOVICHAMP-Borghestral.mp3</Play></Response>`;
   } else {
     twiml = `<Response><Say>Mmmm we broke something in the client.</Say></Response>`;

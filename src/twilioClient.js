@@ -1,6 +1,7 @@
 import Twilio from "twilio-client";
 import { api } from "./api";
 import Emitter, { events } from "./events";
+import log from "loglevel";
 
 export const setup = async () => {
   const response = await api.get("/token");
@@ -15,45 +16,43 @@ export const setup = async () => {
   });
 
   device.on("ready", function(device) {
-    console.log("Device ready!");
+    log.info("Device ready!");
     Emitter.emit(events.ready, { device });
   });
 
   device.on("error", function(error) {
-    console.log("error", error);
+    log.info("error", error);
     Emitter.emit(events.error, { error });
   });
 
   device.on("connect", function(connection) {
-    console.log("connect", connection);
-    console.log(connection);
+    log.info("connect", connection);
     Emitter.emit(events.connect, { connection });
   });
 
   device.on("disconnect", function(connection) {
-    console.log("disconnect", connection);
+    log.info("disconnect", connection);
     Emitter.emit(events.disconnect, { connection });
   });
 
   device.on("incoming", function(connection) {
-    console.warn("setting `Connection` variable");
     window.connection = connection;
-    console.log("incoming", connection);
+    log.info("incoming", connection);
     Emitter.emit(events.incoming, { connection });
   });
 
   device.on("reject", function(connection) {
-    console.log("reject", connection);
+    log.info("reject", connection);
     Emitter.emit(events.reject, { connection });
   });
 
   device.on("cancel", function(connection) {
-    console.log("cancel", connection);
+    log.info("cancel", connection);
     Emitter.emit(events.cancel, { connection });
   });
 
   device.on("close", function(connection) {
-    console.log("close", connection);
+    log.info("close", connection);
     Emitter.emit(events.close, { connection });
   });
 };

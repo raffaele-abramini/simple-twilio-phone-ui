@@ -8,7 +8,7 @@ import io from "socket.io-client";
 
 const rejectingNextCall = "busy for next call";
 const fakingNextAnswer = "faking next answer";
-const enqueueNextCall = "enqueueongs";
+const holdNextCall = "holdongs";
 
 const reducer = (state = {}, action) => {
   switch (action.type) {
@@ -20,9 +20,9 @@ const reducer = (state = {}, action) => {
       return {
         status: fakingNextAnswer
       };
-    case enqueueNextCall:
+    case holdNextCall:
       return {
-        status: enqueueNextCall
+        status: holdNextCall
       };
     case events.ready:
       return {
@@ -42,8 +42,7 @@ const reducer = (state = {}, action) => {
     case events.disconnect:
       return {
         ...state,
-        status:
-          state.status === enqueueNextCall ? enqueueNextCall : events.ready
+        status: state.status === holdNextCall ? holdNextCall : events.ready
       };
     case events.cancel:
       return {
@@ -76,8 +75,8 @@ export const CallControls = () => {
       switch (value) {
         case "fakeAnswer":
           return dispatch({ type: fakingNextAnswer });
-        case "enqueue":
-          return dispatch({ type: enqueueNextCall });
+        case "hold":
+          return dispatch({ type: holdNextCall });
         case "busy":
           return dispatch({ type: rejectingNextCall });
         default:
@@ -90,7 +89,7 @@ export const CallControls = () => {
     window.setAnswer = value => {
       if (!value) {
         console.log(
-          "No values passed. Possible values: `fakeAnswer`, `busy`, `enqueue`, `default`"
+          "No values passed. Possible values: `fakeAnswer`, `busy`, `hold`, `default`"
         );
       }
       socket.emit(websocketEvents.requestChangeHandleCall, {
@@ -114,7 +113,7 @@ export const CallControls = () => {
         </Button>
       </p>
       <p>
-        <Button onClick={() => window.setAnswer("enqueue")}>Enqueue</Button>
+        <Button onClick={() => window.setAnswer("hold")}>Hold</Button>
       </p>
     </>
   );
@@ -126,9 +125,9 @@ export const CallControls = () => {
       </p>
       {status === fakingNextAnswer && <div>Automatic response sent.</div>}
       {status === rejectingNextCall && <div>Call rejected as busy.</div>}
-      {status === enqueueNextCall && (
+      {status === holdNextCall && (
         <div>
-          <p>Call enqueued.</p>
+          <p>Call hold.</p>
           <Button green onClick={() => window.setAnswer("default")}>
             Resume call
           </Button>
