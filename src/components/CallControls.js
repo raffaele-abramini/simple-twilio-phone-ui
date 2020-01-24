@@ -54,7 +54,17 @@ export const CallControls = () => {
         Call status: <Status status={status}>{status}</Status>
       </p>
       {status === events.ready && (
-        <p style={{ color: "#888", fontStyle: "italic" }}>Waiting for a call</p>
+        <>
+          <p style={{ color: "#888", fontStyle: "italic" }}>
+            Waiting for a call
+          </p>
+          <p>
+            or{" "}
+            <Button onClick={() => api.get("/saySomething")}>
+              Send an automatic response for the next incoming call.
+            </Button>
+          </p>
+        </>
       )}
       {status === events.incoming && (
         <>

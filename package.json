@@ -22,6 +22,7 @@
     "parcel-bundler": "^1.12.4",
     "react": "^16.12.0",
     "react-dom": "^16.12.0",
+    "socket.io": "^2.3.0",
     "twilio": "^3.39.3",
     "twilio-chat": "^3.3.4",
     "twilio-client": "^1.9.7"

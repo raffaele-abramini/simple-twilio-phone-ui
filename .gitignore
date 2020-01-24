@@ -1,2 +1,5 @@
 node_modules/
 .idea
+secret.json
+package-lock.json
+dist

@@ -10,5 +10,6 @@ export const events = {
   disconnect: "disconnect",
   incoming: "incoming",
   reject: "reject",
-  cancel: "cancel"
+  cancel: "cancel",
+  close: "close"
 };

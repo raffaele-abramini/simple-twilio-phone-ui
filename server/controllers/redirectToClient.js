@@ -8,18 +8,12 @@ module.exports = function redirectToClient(toNumber) {
 
   if (toNumber) {
     if (globals.goToBrowser) {
-      twiml.dial().client(
-        {
-          statusCallbackEvent: {
-            completed: () => console.log("done")
-          }
-        },
-        globals.identity
-      );
+      twiml.dial().client(globals.identity);
     } else {
       twiml.say(
-        "I'm going to say a very, VERY long reply over here. Listen: Lorem ipsum dolor sit amet, consectetur adipisicing elit. Ab, accusantium ad excepturi impedit magni neque nulla optio quibusdam quo reiciendis repudiandae saepe sapiente tempore totam, voluptatem? Cupiditate fuga quos vitae? Lorem ipsum dolor sit amet, consectetur adipisicing elit. Ab, accusantium ad excepturi impedit magni neque nulla optio quibusdam quo reiciendis repudiandae saepe sapiente tempore totam, voluptatem? Cupiditate fuga quos vitae? Lorem ipsum dolor sit amet, consectetur adipisicing elit. Ab, accusantium ad excepturi impedit magni neque nulla optio quibusdam quo reiciendis repudiandae saepe sapiente tempore totam, voluptatem? Cupiditate fuga quos vitae?"
+        "This is an automated response. And on this bombshell, goodnight!"
       );
+      globals.goToBrowser = true;
     }
   } else {
     twiml.say("Thanks, goodbye!");

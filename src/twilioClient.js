@@ -53,6 +53,10 @@ export const setup = async () => {
     console.log("cancel", connection);
     Emitter.emit(events.cancel, { connection });
   });
+  device.on("close", function(connection) {
+    console.log("close", connection);
+    Emitter.emit(events.close, { connection });
+  });
 
   console.log(Twilio.Device.audio);
 };
