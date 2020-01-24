@@ -8,6 +8,7 @@ import io from "socket.io-client";
 
 const rejectingNextCall = "busy for next call";
 const fakingNextAnswer = "faking next answer";
+const enqueueNextCall = "enqueueongs";
 
 const reducer = (state = {}, action) => {
   switch (action.type) {
@@ -18,6 +19,10 @@ const reducer = (state = {}, action) => {
     case fakingNextAnswer:
       return {
         status: fakingNextAnswer
+      };
+    case enqueueNextCall:
+      return {
+        status: enqueueNextCall
       };
     case events.ready:
       return {
@@ -63,6 +68,8 @@ export const CallControls = () => {
       switch (value) {
         case "fakeAnswer":
           return dispatch({ type: fakingNextAnswer });
+        case "enqueue":
+          return dispatch({ type: enqueueNextCall });
         case "busy":
           return dispatch({ type: rejectingNextCall });
         default:
@@ -84,34 +91,49 @@ export const CallControls = () => {
     return EventEmitter.removeAllListeners;
   }, []);
 
+  const renderCallOptions = () => (
+    <>
+      <p>
+        <Button onClick={() => window.setNextCall("fakeAnswer")}>
+          Send automatic response
+        </Button>
+      </p>
+      <p>
+        <Button onClick={() => window.setNextCall("busy")}>
+          Send busy signal
+        </Button>
+      </p>
+      <p>
+        <Button onClick={() => window.setNextCall("enqueue")}>Enqueue</Button>
+      </p>
+    </>
+  );
+
   return (
     <div>
       <p>
         Call status: <Status status={status}>{status}</Status>
       </p>
-      {status === fakingNextAnswer && (
-        <div>Next call will received an automated answer</div>
-      )}
-      {status === rejectingNextCall && (
-        <div>Next call will be rejected as "busy"</div>
+      {status === fakingNextAnswer && <div>Automatic response sent.</div>}
+      {status === rejectingNextCall && <div>Call rejected as busy.</div>}
+      {status === enqueueNextCall && (
+        <div>
+          <p>Call enqueued.</p>
+          <Button onClick={() => window.setNextCall("default")}>
+            Resume call
+          </Button>
+        </div>
       )}
       {status === events.ready && (
         <>
           <p style={{ color: "#888", fontStyle: "italic" }}>
             Call the above number to proceed
           </p>
-          <p>
-            or{" "}
-            <Button onClick={() => window.setNextCall("fakeAnswer")}>
-              Send an automatic response for the next incoming call.
-            </Button>
+          <p style={{ marginTop: 50, marginBottom: 30 }}>
+            or choose one of the options to change the behaviour for the next
+            incoming call.
           </p>
-          <p>
-            or{" "}
-            <Button onClick={() => window.setNextCall("busy")}>
-              Be busy for next call
-            </Button>
-          </p>
+          {renderCallOptions()}
         </>
       )}
       {status === events.incoming && (
@@ -126,6 +148,7 @@ export const CallControls = () => {
           >
             Decline
           </Button>
+          {renderCallOptions()}
         </>
       )}
       {status === events.connect && (
@@ -153,6 +176,7 @@ export const CallControls = () => {
           >
             Mute
           </Button>
+          {renderCallOptions()}
         </>
       )}
     </div>

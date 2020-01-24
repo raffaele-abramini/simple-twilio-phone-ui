@@ -38,7 +38,7 @@ app.get("/drop", (req, res) => {
 
 app.post("/redirectToClient", (req, res) => {
   res.set("Content-Type", "text/xml");
-  res.send(redirectToClient(req.body.To));
+  res.send(redirectToClient(req.body.To, req.body.CallSid));
 });
 
 http.listen(1337, "127.0.0.1");

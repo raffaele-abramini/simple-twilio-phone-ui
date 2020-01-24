@@ -1,37 +1,35 @@
 const VoiceResponse = require("twilio").twiml.VoiceResponse;
 const globals = require("../globals");
+const secret = require("../../secret");
 const handlWebsocket = require("../handleWebsocket");
 
-const resetAnswerBehaviour = () =>
-  handlWebsocket.setCallOption({
-    value: globals.handleCallOptions.default
-  });
-
-module.exports = function redirectToClient(toNumber) {
+module.exports = function redirectToClient(toNumber, CallSid) {
   // Create a TwiML voice response
-  const twiml = new VoiceResponse();
+  globals.callId = CallSid;
+  const response = new VoiceResponse();
 
   if (toNumber) {
     if (globals.handleCall === globals.handleCallOptions.default) {
-      twiml.dial().client(globals.identity);
+      response.dial().client(globals.identity);
     } else if (globals.handleCall === globals.handleCallOptions.busy) {
-      twiml.reject({ reason: "busy" });
-      resetAnswerBehaviour();
+      response.reject({ reason: "busy" });
     } else if (globals.handleCall === globals.handleCallOptions.fakeAnswer) {
-      twiml.say(
+      response.say(
         "This is an automated response. And on this bombshell, goodnight!"
       );
-      resetAnswerBehaviour();
+    } else if (globals.handleCall === globals.handleCallOptions.enqueue) {
+      response.play(
+        "http://com.twilio.sounds.music.s3.amazonaws.com/MARKOVICHAMP-Borghestral.mp3"
+      );
     } else {
-      twiml.say("Mmmm we broke something in the client.");
+      response.say("Mmmm we broke something in the client.");
       console.error("Invalid `handleCall` value:", globals.handleCall);
-      resetAnswerBehaviour();
     }
   } else {
-    twiml.say("Thanks, goodbye!");
+    response.say("Thanks, goodbye!");
   }
 
-  return twiml.toString();
+  return response.toString();
 };
 
 /**

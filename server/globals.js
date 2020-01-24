@@ -4,9 +4,11 @@ module.exports = {
   currentCall: null,
   socket: null,
   io: null,
+  callId: null,
   handleCallOptions: {
     default: "default",
     fakeAnswer: "fakeAnswer",
-    busy: "busy"
+    busy: "busy",
+    enqueue: "enqueue"
   }
 };

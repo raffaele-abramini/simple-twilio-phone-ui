@@ -1,15 +1,12 @@
 import Twilio from "twilio-client";
 import { api } from "./api";
 import Emitter, { events } from "./events";
-const log = console.log;
 
 export const setup = async () => {
   const response = await api.get("/token");
   const data = response.data;
 
   Emitter.emit(events._receivedIdentity, { identity: data.identity });
-
-  log("Got a token.", data.identity);
 
   // Setup Twilio.Device
   const device = new Twilio.Device(data.token, {
@@ -18,7 +15,7 @@ export const setup = async () => {
   });
 
   device.on("ready", function(device) {
-    console.log("ready");
+    console.log("Device ready!");
     Emitter.emit(events.ready, { device });
   });
 
@@ -29,6 +26,7 @@ export const setup = async () => {
 
   device.on("connect", function(connection) {
     console.log("connect", connection);
+    console.log(connection);
     Emitter.emit(events.connect, { connection });
   });
 
@@ -53,10 +51,9 @@ export const setup = async () => {
     console.log("cancel", connection);
     Emitter.emit(events.cancel, { connection });
   });
+
   device.on("close", function(connection) {
     console.log("close", connection);
     Emitter.emit(events.close, { connection });
   });
-
-  console.log(Twilio.Device.audio);
 };
