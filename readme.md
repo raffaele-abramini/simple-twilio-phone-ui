@@ -30,7 +30,7 @@ And save!
 
 #### 5.
 In the repository, clone `secret.dummy.json` as a `secret.json` file and fill it with your credentials.
-```json
+```javascript
 {
   "accountSid": "", // your account sid (found at https://www.twilio.com/console)
   "authToken": "", // your auth token (found at https://www.twilio.com/console)
