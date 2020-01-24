@@ -1,11 +1,24 @@
 import React, { useReducer, useEffect } from "react";
 import EventEmitter, { events } from "../events";
+import websocketEvents from "../../websocketEvents";
 import { setup } from "../twilioClient";
-import { api } from "../api";
 import { Button, Input, Status } from "./styles";
+
+import io from "socket.io-client";
+
+const rejectingNextCall = "busy for next call";
+const fakingNextAnswer = "faking next answer";
 
 const reducer = (state = {}, action) => {
   switch (action.type) {
+    case rejectingNextCall:
+      return {
+        status: rejectingNextCall
+      };
+    case fakingNextAnswer:
+      return {
+        status: fakingNextAnswer
+      };
     case events.ready:
       return {
         status: events.ready,
@@ -30,6 +43,7 @@ const reducer = (state = {}, action) => {
       return state;
   }
 };
+let socket;
 
 export const CallControls = () => {
   const [{ status, connection }, dispatch] = useReducer(reducer, {});
@@ -43,7 +57,29 @@ export const CallControls = () => {
     EventEmitter.on(events.cancel, () => dispatch({ type: events.ready }));
     EventEmitter.on(events.disconnect, () => dispatch({ type: events.ready }));
 
+    socket = io.connect("http://127.0.0.1:1337");
+
+    socket.on(websocketEvents.applyChangeHandleCall, ({ value }) => {
+      switch (value) {
+        case "fakeAnswer":
+          return dispatch({ type: fakingNextAnswer });
+        case "busy":
+          return dispatch({ type: rejectingNextCall });
+        default:
+          return dispatch({ type: events.ready });
+      }
+    });
+
     setup();
+
+    window.setNextCall = value => {
+      if (!value) {
+        console.log("No values passed. Possible values: `fakeAnswer`, `busy`");
+      }
+      socket.emit(websocketEvents.requestChangeHandleCall, {
+        value
+      });
+    };
 
     return EventEmitter.removeAllListeners;
   }, []);
@@ -53,15 +89,27 @@ export const CallControls = () => {
       <p>
         Call status: <Status status={status}>{status}</Status>
       </p>
+      {status === fakingNextAnswer && (
+        <div>Next call will received an automated answer</div>
+      )}
+      {status === rejectingNextCall && (
+        <div>Next call will be rejected as "busy"</div>
+      )}
       {status === events.ready && (
         <>
           <p style={{ color: "#888", fontStyle: "italic" }}>
-            Waiting for a call
+            Call the above number to proceed
           </p>
           <p>
             or{" "}
-            <Button onClick={() => api.get("/saySomething")}>
+            <Button onClick={() => window.setNextCall("fakeAnswer")}>
               Send an automatic response for the next incoming call.
+            </Button>
+          </p>
+          <p>
+            or{" "}
+            <Button onClick={() => window.setNextCall("busy")}>
+              Be busy for next call
             </Button>
           </p>
         </>

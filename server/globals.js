@@ -1,5 +1,12 @@
 module.exports = {
   identity: "SimplePhoneAppClientID",
-  goToBrowser: true,
-  currentCall: null
+  handleCall: "default",
+  currentCall: null,
+  socket: null,
+  io: null,
+  handleCallOptions: {
+    default: "default",
+    fakeAnswer: "fakeAnswer",
+    busy: "busy"
+  }
 };

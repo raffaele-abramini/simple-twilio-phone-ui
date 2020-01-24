@@ -1,14 +1,18 @@
-const http = require("http");
 const express = require("express");
 const twilio = require("./api/twilio");
 const getToken = require("./controllers/getToken");
 const redirectToClient = require("./controllers/redirectToClient");
-const saySomething = require("./controllers/saySomething");
+const globals = require("./globals");
+const handleWebsocket = require("./handleWebsocket");
 
 const bodyParser = require("body-parser");
-
 const app = express();
+const http = require("http").createServer(app);
+const io = require("socket.io")(http);
 
+globals.io = io;
+
+io.on("connection", handleWebsocket);
 app.use(bodyParser.urlencoded({ extended: false }));
 
 app.use((req, res, next) => {
@@ -32,15 +36,10 @@ app.get("/drop", (req, res) => {
   res.send("dropping");
 });
 
-app.get("/saySomething", (req, res) => {
-  saySomething();
-  res.send("saying somehitng");
-});
-
 app.post("/redirectToClient", (req, res) => {
   res.set("Content-Type", "text/xml");
   res.send(redirectToClient(req.body.To));
 });
 
-http.createServer(app).listen(1337, "127.0.0.1");
+http.listen(1337, "127.0.0.1");
 console.log("Twilio Client app server running at http://127.0.0.1:1337/");
