@@ -56,7 +56,9 @@ const reducer = (state = {}, action) => {
 let socket;
 
 export const CallControls = () => {
-  const [{ status, connection }, dispatch] = useReducer(reducer, {});
+  const [{ status, connection }, dispatch] = useReducer(reducer, {
+    status: "loading"
+  });
 
   useEffect(() => {
     EventEmitter.on(events.ready, () => dispatch({ type: events.ready }));
