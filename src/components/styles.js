@@ -27,7 +27,28 @@ export const Button = styled("button")`
     background: #ddd;
   }
 
-  & + & {
+  ${p =>
+    p.red &&
+    `
+    background: darkred;
+    color: white;
+    &:hover {
+      background: #333;
+    }
+  `}
+  ${p =>
+    p.green &&
+    `
+    background: darkgreen;
+    color: white;
+    
+    &:hover {
+      background: #333;
+    }
+
+  `}
+
+  button + & {
     margin-left: 5px;
   }
 `;

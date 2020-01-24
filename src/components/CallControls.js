@@ -39,6 +39,12 @@ const reducer = (state = {}, action) => {
         ...state,
         status: events.connect
       };
+    case events.disconnect:
+      return {
+        ...state,
+        status:
+          state.status === enqueueNextCall ? enqueueNextCall : events.ready
+      };
     case events.cancel:
       return {
         status: events.cancel,
@@ -60,7 +66,9 @@ export const CallControls = () => {
     });
     EventEmitter.on(events.connect, () => dispatch({ type: events.connect }));
     EventEmitter.on(events.cancel, () => dispatch({ type: events.ready }));
-    EventEmitter.on(events.disconnect, () => dispatch({ type: events.ready }));
+    EventEmitter.on(events.disconnect, () =>
+      dispatch({ type: events.disconnect })
+    );
 
     socket = io.connect("http://127.0.0.1:1337");
 
@@ -79,9 +87,11 @@ export const CallControls = () => {
 
     setup();
 
-    window.setNextCall = value => {
+    window.setAnswer = value => {
       if (!value) {
-        console.log("No values passed. Possible values: `fakeAnswer`, `busy`");
+        console.log(
+          "No values passed. Possible values: `fakeAnswer`, `busy`, `enqueue`, `default`"
+        );
       }
       socket.emit(websocketEvents.requestChangeHandleCall, {
         value
@@ -94,17 +104,17 @@ export const CallControls = () => {
   const renderCallOptions = () => (
     <>
       <p>
-        <Button onClick={() => window.setNextCall("fakeAnswer")}>
+        <Button onClick={() => window.setAnswer("fakeAnswer")}>
           Send automatic response
         </Button>
       </p>
       <p>
-        <Button onClick={() => window.setNextCall("busy")}>
+        <Button onClick={() => window.setAnswer("busy")}>
           Send busy signal
         </Button>
       </p>
       <p>
-        <Button onClick={() => window.setNextCall("enqueue")}>Enqueue</Button>
+        <Button onClick={() => window.setAnswer("enqueue")}>Enqueue</Button>
       </p>
     </>
   );
@@ -119,7 +129,7 @@ export const CallControls = () => {
       {status === enqueueNextCall && (
         <div>
           <p>Call enqueued.</p>
-          <Button onClick={() => window.setNextCall("default")}>
+          <Button green onClick={() => window.setAnswer("default")}>
             Resume call
           </Button>
         </div>
@@ -138,12 +148,18 @@ export const CallControls = () => {
       )}
       {status === events.incoming && (
         <>
-          <Button id="accept" type="button" onClick={() => connection.accept()}>
+          <Button
+            id="accept"
+            type="button"
+            green
+            onClick={() => connection.accept()}
+          >
             Accept
           </Button>
           <Button
             id="decline"
             type="button"
+            red
             onClick={() => connection.reject()}
           >
             Decline
@@ -165,6 +181,7 @@ export const CallControls = () => {
           <Button
             id="hangup"
             type="button"
+            red
             onClick={() => connection.disconnect()}
           >
             Hangup

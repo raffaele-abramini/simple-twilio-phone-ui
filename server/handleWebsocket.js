@@ -8,13 +8,13 @@ module.exports = function handleWebsocket(socket) {
 
   socket.on(websocketEvents.requestChangeHandleCall, setCallOption);
 };
-const serverReset = value => {
+const setServerCallOption = value => {
   globals.handleCall = globals.handleCallOptions[value];
   globals.io.emit(websocketEvents.applyChangeHandleCall, { value });
 };
 
 const setCallOption = ({ value }) => {
-  serverReset(value);
+  setServerCallOption(value);
 
   let twiml;
 
@@ -22,10 +22,10 @@ const setCallOption = ({ value }) => {
     twiml = `<Response><Dial><Client>${globals.identity}</Client></Dial></Response>`;
   } else if (value === globals.handleCallOptions.busy) {
     twiml = `<Response><Reject reason="busy"></Reject></Response>`;
-    serverReset(value);
+    setServerCallOption(globals.handleCallOptions.default);
   } else if (globals.handleCall === globals.handleCallOptions.fakeAnswer) {
     twiml = `<Response><Say>This is an automated response. And on this bombshell, goodnight!</Say></Response>`;
-    serverReset(value);
+    setServerCallOption(globals.handleCallOptions.default);
   } else if (globals.handleCall === globals.handleCallOptions.enqueue) {
     twiml = `<Response><Play>http://com.twilio.sounds.music.s3.amazonaws.com/MARKOVICHAMP-Borghestral.mp3</Play></Response>`;
   } else {
@@ -39,3 +39,4 @@ const setCallOption = ({ value }) => {
 };
 
 module.exports.setCallOption = setCallOption;
+module.exports.setServerCallOption = setServerCallOption;
